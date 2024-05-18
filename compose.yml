@@ -1,0 +1,71 @@
+---
+version: '3.7'
+
+name: learning_rabbitmq
+services:
+  publisher:
+    build: ./
+    image: node:18-alpine
+    command: [ ash, -c, 'cd /usr/src/ && yarn install && yarn run monitor:container' ]
+    environment:
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ./publisher/app:/usr/src/app/
+      - ./publisher/config:/usr/src/config/
+      - ./__containers__/publisher/yarn.lock:/usr/src/yarn.lock
+      - ./__containers__/publisher/node_modules:/usr/src/node_modules/
+      - ./publisher/package.json:/usr/src/package.json
+    networks:
+      - internal
+    depends_on:
+      - rabbitmq
+  # ====================================================
+  consumer_alpha:
+    build: ./
+    image: node:18-alpine
+    command: [ ash, -c, 'cd /usr/src/ && yarn install && export CONSUMER_ID="alpha" && yarn run monitor:container' ]
+    environment:
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ./consumer/app:/usr/src/app/
+      - ./consumer/config:/usr/src/config/
+      - ./__containers__/consumer/yarn.lock:/usr/src/yarn.lock
+      - ./__containers__/consumer/node_modules:/usr/src/node_modules/
+      - ./consumer/package.json:/usr/src/package.json
+    networks:
+      - internal
+    depends_on:
+      - rabbitmq
+  # ====================================================
+  consumer_beta:
+    build: ./
+    image: node:18-alpine
+    command: [ ash, -c, 'cd /usr/src/ && yarn install && export CONSUMER_ID="beta" && yarn run monitor:container' ]
+    environment:
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ./consumer/app:/usr/src/app/
+      - ./consumer/config:/usr/src/config/
+      - ./__containers__/consumer/yarn.lock:/usr/src/yarn.lock
+      - ./__containers__/consumer/node_modules:/usr/src/node_modules/
+      - ./consumer/package.json:/usr/src/package.json
+    networks:
+      - internal
+    depends_on:
+      - rabbitmq
+  # ====================================================
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ./__containers__/rabbitmq/data/:/var/lib/rabbitmq/
+        - ./__containers__/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - internal
+
+networks:
+  internal:
+    driver: bridge
+    name: learning_rabbitmq

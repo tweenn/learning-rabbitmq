@@ -1,0 +1,23 @@
+{
+	"name": "rabbitmq-publisher",
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "Felipe Zuntini <felipezuntini@hotmail.com>",
+	"license": "MIT",
+	"scripts": {
+		"start": "ts-node ./app/index.ts",
+		"monitor:dev": "export NODE_ENV=development && nodemon ./app/index.ts",
+		"monitor:container": "export NODE_ENV=container && nodemon ./app/index.ts"
+	},
+	"dependencies": {
+		"@types/amqplib": "^0.10.5",
+		"@types/node": "20.12.12",
+		"amqplib": "^0.10.4",
+		"config": "3.3.11",
+		"ts-node": "10.9.2",
+		"typescript": "5.4.5"
+	},
+	"devDependencies": {
+		"nodemon": "3.1.0"
+	}
+}
